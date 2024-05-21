@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Greetings{% endblock %}
+
+{% block heading %}GREETINGs{% endblock %}
+
+{% block content %}
+<div class="plate"></div>
+<div id="information">
+    HOST Machine : "{{ context.hostname }}"
+</div>
+<div id="information">
+    REQUESTER Machine : "{{ context.requester }}"
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+
+#heading{
+    text-align: center;
+    font-size: 60px;
+    color: red;
+    background-color: #dddddd;
+}
+
+.plate{
+    border-top: 5px black solid;
+}
+
+#img{
+    position: absolute;
+    border-radius: 50%;
+    max-height: 200px;
+    max-width: 200px;
+    animation-name: move;
+    animation-duration: 3s;
+}
+
+#name{
+    text-align: right;
+    font-size: 100px;
+    color: red;
+    float: right;
+    animation-name: move;
+    animation-duration: 3s;
+}
+
+#information{
+    text-align: center;
+    font-size: 35px;
+}
+
+@keyframes move {
+    from{ transform: rotateZ(0deg) }
+    to{ transform: rotateZ(360deg)}
+}
+
+@media screen and (max-width: 1200px) {
+    #img {
+      display: none
+    }
+  }

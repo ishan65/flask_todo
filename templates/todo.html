@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Todo{% endblock %}
+
+{% block heading %}TODO APP{% endblock %}
+
+{% block content %}
+<form action="" method="POST">
+    <input type="text" id="title" name="title" placeholder="Title" required>
+    <input type="text" id="message" name="message" placeholder="Write the text here...">
+    <input type="submit" value="SAVE">
+</form>
+{% endblock %}

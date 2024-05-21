@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/style.css') }}">
+</head>
+<body>
+    <div class="imgdiv">
+        <img id="img" src="{{ url_for('static', filename='img/ixt65.jpg') }}">
+    </div>
+    <h1 id="heading">{% block heading %}{% endblock %}</h1>
+    <div id="name"> IXT65 </div>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
