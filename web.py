@@ -2,20 +2,30 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import socket
 from secrets_info import password
-from modal import Todo
+
 
 app = Flask(__name__)
-<<<<<<< Updated upstream
 app.config["SECRET_KEY"] = ""
 app.config["MYSQL_DB"] = "todoapp"
 app.config["MYSQL_PASSWORD"] = password
 app.config["MYSQL_USER"] = "mydb"
 app.config["MYSQL_HOST"] = "mysql-db"
-mysql = SQLAlchemy(app)
+app.config["MYSQL_PORT"] = 3306
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"mysql+pymysql://{app.config['MYSQL_USER']}:{app.config['MYSQL_PASSWORD']}@{app.config['MYSQL_HOST']}/{app.config['MYSQL_DB']}"
+        f"mysql+pymysql://{app.config['MYSQL_USER']}:{app.config['MYSQL_PASSWORD']}@{app.config['MYSQL_HOST']}:{app.config['MYSQL_PORT']}/{app.config['MYSQL_DB']}"
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+mysql = SQLAlchemy(app)
+
+
+
+class Todo(mysql.Model):
+    id = mysql.Column(mysql.Integer, primary_key=True)
+    title = mysql.Column(mysql.String(50), unique=True, nullable=False)
+    message = mysql.Column(mysql.String(200), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"Todo {self.title}"
 
 
 @app.route("/")
@@ -38,7 +48,7 @@ def todo():
     return render_template("todo.html", context=context)
 
 
-@app.route("/todo/create", methods=["GET", "POST"])
+@app.route("/todo/create", methods=["POST"])
 def create():
     if request.method == "POST":
         title = request.form["title"]

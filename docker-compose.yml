@@ -2,15 +2,32 @@ services:
   flask-app:
     build:
       context: ./app
+    environment:
+      FLASK_ENV: development
+      MYSQL_HOST: mysql-db
+      MYSQL_PORT: 3306
+      MYSQL_USER: mydb
+      MYSQL_PASSWORD: password
+      MYSQL_DB: todoapp
     ports:
       - "5789:5789"
     depends_on:
       - mysql-db
     volumes:
       - ./:/usr/src/app
+
   mysql-db:
     image: mysql
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: my-secret-pw
-      MYSQL_DATABASE: mydb
+      MYSQL_DATABASE: todoapp
+      MYSQL_USER: mydb
+      MYSQL_PASSWORD: password
+    volumes:
+      - db-data:/var/lib/mysql
 
+volumes:
+  db-data: {}
