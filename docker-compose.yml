@@ -1,0 +1,16 @@
+services:
+  flask-app:
+    build:
+      context: ./app
+    ports:
+      - "5789:5789"
+    depends_on:
+      - mysql-db
+    volumes:
+      - ./:/usr/src/app
+  mysql-db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: mydb
+

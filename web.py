@@ -5,6 +5,7 @@ from secrets_info import password
 from modal import Todo
 
 app = Flask(__name__)
+<<<<<<< Updated upstream
 app.config["SECRET_KEY"] = ""
 app.config["MYSQL_DB"] = "todoapp"
 app.config["MYSQL_PASSWORD"] = password

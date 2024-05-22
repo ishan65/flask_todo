@@ -1,0 +1,9 @@
+services:
+  flask-app:
+    build:
+      context: ./
+    ports:
+      - "5789:5789"
+    volumes:
+      - "../:/usr/src/app"
+    command: python3 web.py
