@@ -1,18 +1,20 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask_sqlalchemy import SQLAlchemy
 import socket
 from secrets_info import password
-
+from modal import Todo
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = ""
-app.config['MYSQL_DB'] = "todoapp"
-app.config['MYSQL_PASSWORD'] = password
-app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_HOST'] = "localhost"
-app.config['MYSQL_CURSORCLASS'] = "DictCursor"
-mysql = MySQL(app)
+app.config["SECRET_KEY"] = ""
+app.config["MYSQL_DB"] = "todoapp"
+app.config["MYSQL_PASSWORD"] = password
+app.config["MYSQL_USER"] = "mydb"
+app.config["MYSQL_HOST"] = "mysql-db"
+mysql = SQLAlchemy(app)
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"mysql+pymysql://{app.config['MYSQL_USER']}:{app.config['MYSQL_PASSWORD']}@{app.config['MYSQL_HOST']}/{app.config['MYSQL_DB']}"
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
 @app.route("/")
@@ -25,56 +27,69 @@ def index():
 
 @app.route("/todo")
 def todo():
-    conn = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    conn.execute('SELECT * FROM posts ORDER BY id DESC')
-    post = conn.fetchall()
-    context = post
+    tasks = Todo.query.all()
+    context = jsonify(
+        [
+            {"id": task.id, "title": task.username, "message": task.message}
+            for task in tasks
+        ]
+    )
     return render_template("todo.html", context=context)
 
-@app.route('/create', methods=['GET', 'POST'])
+
+@app.route("/todo/create", methods=["GET", "POST"])
 def create():
     if request.method == "POST":
-        title = request.form['title']
-        message = request.form['message']
-        conn = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        conn.execute('INSERT INTO posts VALUES(NULL, %s, %s)', (title, message))
-        conn.connection.commit()
-        return redirect(url_for('index'))
-    return render_template('create.html')
+        title = request.form["title"]
+        message = request.form["message"]
+        newtask = Todo(title=title, message=message)
+        mysql.session.add(newtask)
+        mysql.commit()
+        return redirect(url_for("index"))
+    return render_template("create.html")
 
 
-@app.route('/<int:post_id>')
+@app.route("/todo/<int:post_id>")
 def post(post_id):
-    conn = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    conn.execute("SELECT id, title, message FROM posts WHERE id = %s", (post_id,))
-    detailed_post = conn.fetchone()
+    single_task = Todo.query.get(id=post_id)
+    detailed_post = jsonify(
+        [
+            {"id": task.id, "title": task.username, "message": task.message}
+            for task in single_task
+        ]
+    )
     return render_template("detailed_post.html", detailed_post=detailed_post)
 
 
-@app.route('/<int:post_id>/edit', methods=['GET', 'POST'])
+@app.route("/todo/<int:post_id>/edit", methods=["GET", "POST"])
 def edit(post_id):
-    conn = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    conn.execute("SELECT title, message FROM posts WHERE id = %s", (post_id,))
-    old_data = conn.fetchone()
+    edit_task = Todo.query.get(id=post_id)
+    if edit_task is None:
+        return jsonify({"message": "Task not found"}), 404
 
     if request.method == "POST":
-        title = request.form['title']
-        message = request.form['message']
-        conn.execute("UPDATE posts SET title = %s, message = %s", (title, message))
-        conn.connection.commit()
-        conn.close()
-        return redirect(url_for('index'))
+        edit_task.title = request.form["title"]
+        edit_task.message = request.form["message"]
+        mysql.session.commit()
+        return redirect(url_for("index"))
+    context = jsonify(
+        [
+            {"id": task.id, "title": task.username, "message": task.message}
+            for task in edit_task
+        ]
+    )
+    return render_template("edit.html", old_data=context)
 
-    return render_template("edit.html", old_data=old_data)
 
-
-@app.route('/<int:post_id>/delete')
+@app.route("/todo/<int:post_id>/delete")
 def delete(post_id):
-    conn = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    conn.execute("DELETE FROM posts WHERE id = %s", (post_id,))
-    conn.connection.commit()
-    return redirect(url_for('index'))
+    delete_task = Todo.query.get(id=post_id)
+    mysql.session.delete(delete_task)
+    mysql.session.commit()
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        mysql.create_all()
     app.run(host="0.0.0.0", port=5789, debug=True)

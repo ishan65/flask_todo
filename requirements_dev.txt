@@ -1,5 +1,6 @@
 flask
-Flask-MySQLdb
+Flask-SQLAlchemy
+PyMySQL
 pytest
 flake8
 pytest-cov
