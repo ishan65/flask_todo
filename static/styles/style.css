@@ -48,3 +48,52 @@
       display: none
     }
   }
+
+
+#todohome,#todocreate,#todo_detai,#todo_edit{
+	text-align: center
+}
+
+#title,#message{
+	margin: 30px;
+	height: 30px;
+	border-radius: 5px;
+}
+
+#message{
+	width: 350px;
+}
+
+#btn{
+	margin:30px;
+	height: 30px;
+}
+
+table {
+  margin-left: 10%;
+  margin-right: 10%; 
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+a{
+   text-decoration: none;
+   padding: 3px 6px 3px 6px;
+   color: #333333;
+   border: 1px solid #CCCCCC;
+}
+
+a::hover{
+	color: #555555;
+}

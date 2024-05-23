@@ -5,9 +5,24 @@
 {% block heading %}TODO APP{% endblock %}
 
 {% block content %}
-<form action="" method="POST">
-    <input type="text" id="title" name="title" placeholder="Title" required>
-    <input type="text" id="message" name="message" placeholder="Write the text here...">
-    <input type="submit" value="SAVE">
-</form>
+<div id="todohome">
+	<table>
+	<tr>
+	  <th> ID </th>
+	  <th> Title </th>
+	  <th> Message </th>
+	  <th> TO Edit </th>
+	  <th> TO Delete </th>
+	</tr>
+	{% for task in tasks %}
+	<tr>
+		<td>"{{ task.id }}"</td>
+		<td>"{{ task.title }}"</td>
+		<td>"{{ task.message }}"</td>
+		<td><a href="{{ url_for("edit", post_id=task.id) }}">EDIT</a></td>
+		<td><a href="{{ url_for("delete", post_id=task.id) }}">DELETE</a></td>
+	</tr>
+	{% endfor %}
+	</table>
+</div>
 {% endblock %}
