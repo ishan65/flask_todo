@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %} ToDo App - Main Page {% endblock %}
+{% block title %} ToDo App - Edit Page {% endblock %}
+{% block heading %}Edit TODO APP - "{{ old_data.id }}" {% endblock %}
 
 {% block content %}
-<form action="" method="POST">
-    <input type="text" id="title" name="title" value="{{old_data['title']}}" required>
-    <input type="text" id="message" name="message" value="{{old_data['message']}}" required>
+<div id="todo_edit">
+<form action="{{ url_for("edit", post_id=old_data.id ) }}" method="POST">
+	<input type="text" id="title" name="title" value="{{ old_data.title }}" required></input>
+	<input type="text" id="message" name="message" value="{{ old_data.message }}" required></input>
     <input type="submit" value="SAVE">
 </form>
+<hr>
+<a href="{{ url_for("todo") }}">TODO List</a>
+</div>
 {% endblock %}

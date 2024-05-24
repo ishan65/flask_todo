@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} ToDo App - Create Page {% endblock %}
+
+{% block heading%} Todo App Create {% endblock %}
+
+{% block content %}
+<div id="todocreate">
+<form action="{{ url_for('create') }}" method="post">
+	<input type="text" id="title" name="title"  placeholder="Title" required></input>
+	<input type="text" id="message" name="message" placeholder="Write the text message" required></input>
+    <button type="submit" id="btn">CREATE</button>
+</form>
+<hr>
+<a href="{{ url_for('todo') }}">TODO List</a>
+</div>
+{% endblock %}

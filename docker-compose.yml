@@ -1,0 +1,40 @@
+services:
+  flask-app:
+    build:
+      context: ./
+      dockerfile: app/Dockerfile
+    environment:
+      FLASK_ENV: development
+      MYSQL_HOST: mysql-db
+      MYSQL_PORT: 3306
+      MYSQL_USER: mydb
+      MYSQL_PASSWORD: password
+      MYSQL_DB: todoapp
+    ports:
+      - "5789:5789"
+    depends_on:
+      - mysql-db
+    volumes:
+      - ./:/usr/src/app
+    command: ["python", "web.py"]
+
+  mysql-db:
+    container_name: mysql-db
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: todoapp
+      MYSQL_USER: mydb
+      MYSQL_PASSWORD: password
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  db-data:

@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %} Detailed Page {% endblock %}
+{% block title %} Detailed TODO Item {% endblock %}
+
+{% block heading %}Detailed TODO APP - "{{ detailed_post.id }}" {% endblock %}
 
 {% block content %}
-    <h1>{{detailed_post['title']}}</h1>
-    <p>{{detailed_post['message']}}</p>
+   <div id="todo_detail">
+    <h1>"{{ detailed_post.title }}"</h1>
+    <p>"{{ detailed_post.message }}"</p>
     <br>
     <div class="buttons">
-        <a href="/{{detailed_post['id']}}/edit" class="button">Edit</a>
-        <a href="/{{detailed_post['id']}}/delete" class="button">Delete</a>
+	    <a href="{{ url_for("edit", post_id=detailed_post.id ) }}" id="btn">Edit</a>
+	    <a href="{{ url_for("delete", post_id=detailed_post.id ) }}" id="btn">Delete</a>
+    </div>
     </div>
 {% endblock %}
