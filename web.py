@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import socket
 from secrets_info import password
+import tempfile
+import time
 
 
 app = Flask(__name__)
@@ -9,12 +11,16 @@ app.config["SECRET_KEY"] = ""
 app.config["MYSQL_DB"] = "todoapp"
 app.config["MYSQL_PASSWORD"] = password
 app.config["MYSQL_USER"] = "mydb"
-# app.config["MYSQL_HOST"] = "mysql-db"
-app.config["MYSQL_HOST"] = "localhost"
+app.config["MYSQL_HOST"] = "mysql-db"
+# app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_PORT"] = 3306
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-        f"mysql+pymysql://{app.config['MYSQL_USER']}:{app.config['MYSQL_PASSWORD']}@{app.config['MYSQL_HOST']}:{app.config['MYSQL_PORT']}/{app.config['MYSQL_DB']}"
-)
+
+if __name__ == "__main__":
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+            f"mysql+pymysql://{app.config['MYSQL_USER']}:{app.config['MYSQL_PASSWORD']}@{app.config['MYSQL_HOST']}:{app.config['MYSQL_PORT']}/{app.config['MYSQL_DB']}")
+else:
+    _, db_path = tempfile.mkstemp()
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 mysql = SQLAlchemy(app)
 
@@ -29,7 +35,13 @@ class Todo(mysql.Model):
 
 
 with app.app_context():
-    mysql.create_all()
+    while True:
+        try:
+            mysql.create_all()
+            break
+        except Exception as e:
+            print(f"DB connection fail: {e}")
+            time.sleep(2)
 
 
 @app.route("/")

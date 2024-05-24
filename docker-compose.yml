@@ -1,7 +1,8 @@
 services:
   flask-app:
     build:
-      context: ./app
+      context: ./
+      dockerfile: app/Dockerfile
     environment:
       FLASK_ENV: development
       MYSQL_HOST: mysql-db
@@ -15,9 +16,11 @@ services:
       - mysql-db
     volumes:
       - ./:/usr/src/app
+    command: ["python", "web.py"]
 
   mysql-db:
-    image: mysql
+    container_name: mysql-db
+    image: mysql:5.7
     ports:
       - "3306:3306"
     environment:
@@ -27,6 +30,11 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
-  db-data: {}
+  db-data:

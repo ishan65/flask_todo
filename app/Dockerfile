@@ -1,8 +1,13 @@
+# Use an official Python runtime as a parent image
 FROM python:3.9-slim
-WORKDIR /usr/src/app
+
 VOLUME /usr/src/app
-RUN pip install --upgrade pip
-RUN pip install flask
-RUN pip install Flask-SQLAlchemy
-RUN pip install PyMySQL
-CMD ["python", "web.py"]
+# Set the working directory in the container
+WORKDIR /usr/src/app
+COPY . .
+# Install any needed packages specified in requirements.txt
+RUN pip install --upgrade pip \
+    && pip install -r requirements_dev.txt
+# Make port 5789 available to the world outside this container
+EXPOSE 5789
+
